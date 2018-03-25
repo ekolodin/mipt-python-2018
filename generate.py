@@ -19,17 +19,19 @@ def Generate(start_, len_, dict_):
     return sentence
 
 
+output_file_ = ''
+link_to_save_ = ''
 while True:
     cmnd_ = input().split()
     if cmnd_[0] == 'exit':
         break
     elif cmnd_[0] == '--output':
-        pass
+        output_file_ = cmnd_[1]
     elif cmnd_[0] == '--model':
-        pass
+        link_to_save_ = cmnd_[1]
     elif cmnd_[0] == '--seed':
-        pass
+        start_ = cmnd_[1]
     elif cmnd_[0] == '--length':
-        pass
+        len_ = int(cmnd_[1])
     elif cmnd_[0] == '--help':
         print('print "exit" to finish')

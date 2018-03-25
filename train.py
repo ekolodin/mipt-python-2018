@@ -2,12 +2,13 @@ def IsLetter(letter_):
     return 'a' <= letter_ <= 'z' or 'A' <= letter_ <= 'Z'
 
 
-def CheckWord(word_):
+def CheckWord(word_, lowercase = False):
     for letter_ in word_:
         if not IsLetter(letter_):
             word_ = word_.replace(letter_, '')
 
-    word_ = word_.lower()
+    if lowercase:
+        word_ = word_.lower()
     return word_
 
 
@@ -73,15 +74,18 @@ def MakeDict(link_to_file_='input.txt'):
     return dict_
 
 
+link_to_load_ = ''
+link_to_save_ = ''
+lowercase = False
 while True:
     cmnd_ = input().split()
     if cmnd_[0] == 'exit':
         break
     elif cmnd_[0] == '--input-dir':
-        pass
+        link = cmnd_[1]
     elif cmnd_[0] == '--model':
-        pass
+        link_to_save = cmnd_[1]
     elif cmnd_[0] == '--lc':
-        pass
+        lowercase = True
     elif cmnd_[0] == '--help':
-        pass
+        print('print "exit" to finish')
