@@ -1,37 +1,37 @@
 import random
 
 
-def Generate(start_, len_, dict_):
-    sentence = start_
-    curr_len_ = 1
-    word_ = start_
-    while curr_len_ < len_:
-        frequencies = list(dict_[word_].values())
+def generate(start, length, def_dict):
+    sentence = start
+    curr_len = 1
+    word = start
+    while curr_len < length:
+        frequencies = list(def_dict[word].values())
         need = random.choice(frequencies)
-        for j in dict_[word_].keys():
-            if dict_[word_][j] == need:
-                word_ = j
+        for j in def_dict[word].keys():
+            if def_dict[word][j] == need:
+                word = j
                 break
 
-        sentence += ' ' + word_
-        curr_len_ += 1
+        sentence += ' ' + word
+        curr_len += 1
 
     return sentence
 
 
-output_file_ = ''
-link_to_save_ = ''
+output_file = ''
+link_to_save = ''
 while True:
-    cmnd_ = input().split()
-    if cmnd_[0] == 'exit':
+    cmnd = input().split()
+    if cmnd[0] == 'exit':
         break
-    elif cmnd_[0] == '--output':
-        output_file_ = cmnd_[1]
-    elif cmnd_[0] == '--model':
-        link_to_save_ = cmnd_[1]
-    elif cmnd_[0] == '--seed':
-        start_ = cmnd_[1]
-    elif cmnd_[0] == '--length':
-        len_ = int(cmnd_[1])
-    elif cmnd_[0] == '--help':
+    elif cmnd[0] == '--output':
+        output_file = cmnd[1]
+    elif cmnd[0] == '--model':
+        link_to_save = cmnd[1]
+    elif cmnd[0] == '--seed':
+        start = cmnd[1]
+    elif cmnd[0] == '--length':
+        length = int(cmnd[1])
+    elif cmnd[0] == '--help':
         print('print "exit" to finish')
