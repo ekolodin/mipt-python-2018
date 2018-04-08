@@ -1,3 +1,8 @@
+from collections import defaultdict
+import argparse
+import pickle
+
+
 def check_word(word, lowercase=False):
     for letter in word:
         if not letter.isalpha():
@@ -8,32 +13,12 @@ def check_word(word, lowercase=False):
     return word
 
 
-def write(def_dict):
-    for dict_next in def_dict:
-        print(dict_next, len(def_dict[dict_next]), sep='\n')  # the key word and size of sub_dictionary
-        for word in def_dict[dict_next]:
-            print(word, def_dict[dict_next][word])  # second word in collocation and its frequency
+def write(def_dict, link_to_file):
+    with open(link_to_file, 'wb') as file:
+        pickle.dump(def_dict, file)
 
 
-def read(path_to_file='input.txt'):
-    with open(path_to_file) as path:
-        file = path.read().split('\n')
-        def_dict = defaultdict(defaultdict)
-
-        i = 0
-        while i < len(file):
-            i += 1
-            temp_dict = defaultdict(int)
-            for j in range(int(file[i])):
-                temp_dict[file[i + j + 1].split()[0]] = int(file[i + j + 1].split()[1])
-
-            def_dict[file[i - 1]] = temp_dict
-            i += (int(file[i]) + 1)
-
-        return def_dict
-
-
-def make_dict(file_name='input.txt'):
+def make_dict(lowercase=False, file_name='input.txt'):
     with open(file_name) as file:
         def_dict = defaultdict(defaultdict)  # dict() -> dict() -> frequency
         last_word = ''
@@ -42,7 +27,7 @@ def make_dict(file_name='input.txt'):
             words = line.split()
             corrected_words = []
             for word in words:
-                corrected_words.append(check_word(word))
+                corrected_words.append(check_word(word, lowercase))
 
             for i in range(len(corrected_words) - 1):
                 if i == 0:
@@ -62,18 +47,15 @@ def make_dict(file_name='input.txt'):
         return def_dict
 
 
-link_to_load = ''
-link_to_save = ''
-lowercase = False
-while True:
-    cmnd = input().split()
-    if cmnd[0] == 'exit':
-        break
-    elif cmnd[0] == '--input-dir':
-        link = cmnd[1]
-    elif cmnd[0] == '--model':
-        link_to_save = cmnd[1]
-    elif cmnd[0] == '--lc':
-        lowercase = True
-    elif cmnd[0] == '--help':
-        print('print "exit" to finish')
+lower = False
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--input-dir', required=True, dest='link_to_load', help='path to file to load')
+parser.add_argument('--model', required=True, dest='link_to_save', help='path to file to save')
+parser.add_argument('--lc', help='reduction to lowercase')
+
+args = parser.parse_args()
+if args.lc:
+    lower = True
+
+write(make_dict(lower, args.link_to_load), args.link_to_save)
