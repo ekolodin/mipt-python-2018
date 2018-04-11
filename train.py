@@ -14,43 +14,35 @@ def check_word(word, lowercase=False):
 
 
 def write(def_dict, link_to_file):
+    temp_dict = defaultdict(dict)
+    for i in def_dict:
+        temp_dict[i] = dict(def_dict[i])
     with open(link_to_file, 'wb') as file:
-        pickle.dump(def_dict, file)
+        pickle.dump(temp_dict, file)
 
 
-def make_dict(lowercase=False, file_name='input.txt'):
-    with open(file_name) as file:
-        def_dict = defaultdict(defaultdict)  # dict() -> dict() -> frequency
-        last_word = ''
+def make_dict(lowercase, stdin, file_name='input.txt'):
+    full_text = []
+    if not stdin:
+        with open(file_name) as file:
+            for line in file:
+                words = line.split()
+                for word in words:
+                    full_text.append(check_word(word, lowercase))
+    else:
+        full_text = input().split()
 
-        for line in file:
-            words = line.split()
-            corrected_words = []
-            for word in words:
-                corrected_words.append(check_word(word, lowercase))
+    def_dict = defaultdict(lambda: defaultdict(int))  # defaultdict() -> defaultdict() -> frequency
+    for i in range(len(full_text) - 1):
+        def_dict[full_text[i]][full_text[i + 1]] += 1
 
-            for i in range(len(corrected_words) - 1):
-                if i == 0:
-                    if corrected_words[0] in def_dict[last_word]:
-                        def_dict[last_word][corrected_words[0]] += 1
-                    else:
-                        def_dict[last_word][corrected_words[0]] = 1
-
-                if corrected_words[i + 1] in def_dict[corrected_words[i]]:
-                    def_dict[corrected_words[i]][corrected_words[i + 1]] += 1
-                else:
-                    def_dict[corrected_words[i]][corrected_words[i + 1]] = 1
-
-                last_word = corrected_words[len(corrected_words) - 1]
-
-        del def_dict['']
-        return def_dict
+    return def_dict
 
 
 lower = False
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input-dir', required=True, dest='link_to_load', help='path to file to load')
+parser.add_argument('--input-dir', dest='link_to_load', help='path to file to load')
 parser.add_argument('--model', required=True, dest='link_to_save', help='path to file to save')
 parser.add_argument('--lc', help='reduction to lowercase')
 
@@ -58,4 +50,7 @@ args = parser.parse_args()
 if args.lc:
     lower = True
 
-write(make_dict(lower, args.link_to_load), args.link_to_save)
+if args.link_to_load:
+    write(make_dict(lower, False, args.link_to_load), args.link_to_save)
+else:
+    write(make_dict(lower, True), args.link_to_save)

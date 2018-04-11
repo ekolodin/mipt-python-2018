@@ -1,6 +1,6 @@
-import random
 import argparse
 import pickle
+from random import choices
 from collections import defaultdict
 
 
@@ -11,21 +11,14 @@ def read(path_to_file):
 
 
 def generate(start, length, def_dict):
-    sentence = start
-    curr_len = 1
+    generated_words = [start]
     word = start
-    while curr_len < length:
+    while len(generated_words) < length:
         frequencies = list(def_dict[word].values())
-        need = random.choice(frequencies)
-        for j in def_dict[word].keys():
-            if def_dict[word][j] == need:
-                word = j
-                break
+        word = choices(list(def_dict[word].keys()), frequencies)[0]
+        generated_words.append(word)
 
-        sentence += ' ' + word
-        curr_len += 1
-
-    return sentence
+    return ' '.join(generated_words)
 
 
 parser = argparse.ArgumentParser()
