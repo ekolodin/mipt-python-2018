@@ -8,6 +8,6 @@ ID(студента), mark_1, mark_2, mark_3, mark_4, mark_5
 где data -- вектора из трех компонент(name, surname, age), поле ID -- генерируется автоматически
 *Fill_table_marks(data, host, db_name)* -- заполнение таблицы оценок данными data,
 где data -- вектора из шести компонент(ID, mark_{1, 2, 3, 4, 5})
-Получение средний оценки каждого студента -- *Get_average(host, db_name)*
+Получение средней оценки каждого студента -- *Get_average(host, db_name)*
 Вывод гистограммы с используя matplotlib -- *Show_hist(sample)*, где sample --
 вектор средних оценок студентов
