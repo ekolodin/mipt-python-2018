@@ -25,54 +25,59 @@ def create_table_marks(host, db_name):
 def fill_table_students(data, host, db_name):
     with psycopg2.connect(host=host, dbname=db_name) as conn:
         with conn.cursor() as cursor:
-
-            for i in data:
-                cursor.execute("""
-                    INSERT INTO students(name, surname, age)
-                    VALUES (%s, %s, %s)
-                    """, (i[0], i[1], i[2]))
+            for line in data:
+                if len(line) != 3:
+                    print('Incorrect input: {}'.format(line))
+                else:
+                    cursor.execute("""
+                        INSERT INTO students(name, surname, age)
+                        VALUES (%s, %s, %s)
+                        """, (line[0], line[1], line[2]))
         conn.commit()
 
 
 def fill_table_marks(data, host, db_name):
     with psycopg2.connect(host=host, dbname=db_name) as conn:
         with conn.cursor() as cursor:
-
-            for i in data:
-                cursor.execute("""
-                    INSERT INTO marks
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """, (i[0], i[1], i[2], i[3], i[4], i[5]))
+            for line in data:
+                if len(line) != 6:
+                    print('Incorrect input: {}'.format(line))
+                else:
+                    cursor.execute("""
+                        INSERT INTO marks
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """, (line[0], line[1], line[2],
+                              line[3], line[4], line[5]))
         conn.commit()
 
 
 def get_students(link):
-    with open(link) as f:
+    with open(link) as file:
         data = []
-        try:
-            for i in f.read().split('\n'):
-                student = []
-                for j in i.split():
-                    student.append(j)
+        for i in file.read().split('\n'):
+            student = []
+            for j in i.split():
+                student.append(j)
+            try:
                 student[-1] = int(student[-1])
-                data.append(student)
-            return data
-        except ValueError:
-            print('Incorrect input')
+            except ValueError:
+                print('Cannot cast {} to int'.format(student[-1]))
+                return
+            data.append(student)
+        return data
 
 
 def get_marks(link):
-    with open(link) as f:
+    with open(link) as file:
         data = []
-        try:
-            for i in f.read().split('\n'):
-                marks = []
-                for j in i.split():
-                    marks.append(int(j))
-                data.append(marks)
-            return data
-        except ValueError:
-            print('Incorrect input')
+        for line in file.read().split('\n'):
+            try:
+                marks = list(map(int, line.split()))
+            except ValueError:
+                print('Cannot cast {} to int'.format(line.split()))
+                return
+            data.append(marks)
+        return data
 
 
 def get_average(host, db_name):
