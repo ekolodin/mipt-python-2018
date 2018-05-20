@@ -1,4 +1,5 @@
 import psycopg2
+import argparse
 import matplotlib.pyplot as plt
 
 
@@ -57,24 +58,30 @@ def fill_table_marks(data, host, db_name):
 def get_students(link):
     with open(link) as f:
         data = []
-        for i in f.read().split('\n'):
-            student = []
-            for j in i.split():
-                student.append(j)
-            student[-1] = int(student[-1])
-            data.append(student)
-        return data
+        try:
+            for i in f.read().split('\n'):
+                student = []
+                for j in i.split():
+                    student.append(j)
+                student[-1] = int(student[-1])
+                data.append(student)
+            return data
+        except ValueError:
+            print('Incorrect input')
 
 
 def get_marks(link):
     with open(link) as f:
         data = []
-        for i in f.read().split('\n'):
-            marks = []
-            for j in i.split():
-                marks.append(int(j))
-            data.append(marks)
-        return data
+        try:
+            for i in f.read().split('\n'):
+                marks = []
+                for j in i.split():
+                    marks.append(int(j))
+                data.append(marks)
+            return data
+        except ValueError:
+            print('Incorrect input')
 
 
 def get_average(host, db_name):
@@ -100,8 +107,16 @@ def show_hist(sample):
     plt.show()
 
 
-create_table_students('localhost', 'group_697')
-create_table_marks('localhost', 'group_697')
-fill_table_students(get_students('students.txt'), 'localhost', 'group_697')
-fill_table_marks(get_marks('marks.txt'), 'localhost', 'group_697')
-show_hist(get_average('localhost', 'group_697'))
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--students_file', required=True, dest='students', help='path to load students')
+    parser.add_argument('--marks_file', required=True, dest='marks', help='path to load marks')
+    parser.add_argument('--host', required=True, dest='host', help='host')
+    parser.add_argument('--database', required=True, dest='database', help='name of database')
+
+    args = parser.parse_args()
+    create_table_students(args.host, args.database)
+    create_table_marks(args.host, args.database)
+    fill_table_students(get_students(args.students), args.host, args.database)
+    fill_table_marks(get_marks(args.marks), args.host, args.database)
+    show_hist(get_average(args.host, args.database))
